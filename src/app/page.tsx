@@ -18,11 +18,11 @@ export default function Home() {
         }}
       >
         <ambientLight color={'white'} intensity={0.3} />
-        <LightBulb position={[1, 3, 2]} />
-        <LightBulb position={[-1, 3, -2]} />
+        <LightBulb position={[2, 6, 4]} />
+        <LightBulb position={[-2, 6, -4]} />
         <Box />
         <OrbitControls />
-        <Floor position={[0, -0.75, 0]} />
+        {/* <Floor position={[0, -0.75, 0]} /> */}
       </Canvas>
     </div>
   );

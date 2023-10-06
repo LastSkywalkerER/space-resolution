@@ -4,8 +4,9 @@ import { Canvas } from '@react-three/fiber';
 import css from './index.module.css';
 import { Floor } from '@/components/floor';
 import { LightBulb } from '@/components/LightBulb';
-import { Box } from '@/components/box';
+import { Ship } from '@/components/ship';
 import { OrbitControls } from '@/components/controls';
+import { Sky } from '@react-three/drei';
 
 export default function Home() {
   return (
@@ -17,10 +18,9 @@ export default function Home() {
           position: [-6, 7, 7],
         }}
       >
-        <ambientLight color={'white'} intensity={0.3} />
-        <LightBulb position={[2, 6, 4]} />
-        <LightBulb position={[-2, 6, -4]} />
-        <Box />
+        <ambientLight intensity={1.5} />
+        <Sky sunPosition={[100, 20, 100]} />
+        <Ship />
         <OrbitControls />
         {/* <Floor position={[0, -0.75, 0]} /> */}
       </Canvas>

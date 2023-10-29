@@ -2,45 +2,16 @@
 
 import { Canvas } from '@react-three/fiber';
 import css from './index.module.css';
-import { Floor } from '@/components/floor';
-import { LightBulb } from '@/components/LightBulb';
 import { CAMERA_HEIGHT, Ship } from '@/components/ship';
-import { OrbitControls } from '@/components/controls';
 import {
   KeyboardControls,
   KeyboardControlsEntry,
-  PerspectiveCamera,
-  Scroll,
-  ScrollControls,
-  FlyControls,
   Sky,
-  TrackballControls,
 } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
 import { Suspense, useMemo } from 'react';
 import { Asteroid } from '@/components/asteroid';
-
-const createCoordinate = (
-  from: number = 5,
-  to: number = 50,
-  withMinus: boolean = true,
-) =>
-  Math.floor(Math.random() * (to - from) + from) *
-  (withMinus && Math.round(Math.random()) === 0 ? -1 : 1);
-
-const asteroids: [number, number, number][] = Array.from(Array(50), () => [
-  createCoordinate(),
-  1,
-  createCoordinate(),
-]);
-
-export enum Controls {
-  Forward = 'forward',
-  Back = 'back',
-  Left = 'left',
-  Right = 'right',
-  // jump = 'jump',
-}
+import { Controls, asteroids } from '@/constants';
 
 export default function Home() {
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
@@ -49,7 +20,6 @@ export default function Home() {
       { name: Controls.Back, keys: ['ArrowDown', 'KeyS'] },
       { name: Controls.Left, keys: ['ArrowLeft', 'KeyA'] },
       { name: Controls.Right, keys: ['ArrowRight', 'KeyD'] },
-      // { name: Controls.jump, keys: ['Space'] },
     ],
     [],
   );
@@ -64,13 +34,9 @@ export default function Home() {
             position: [0, CAMERA_HEIGHT, 0],
           }}
         >
-          {/* <ScrollControls infinite> */}
           <ambientLight intensity={1.5} />
           <Sky sunPosition={[100, 20, 100]} />
-          {/* <PerspectiveCamera makeDefault /> */}
-          {/* <TrackballControls  /> */}
-          {/* <OrbitControls /> */}
-          <FlyControls />
+
           <Suspense>
             <Physics gravity={[0, 0, 0]}>
               <Ship />
@@ -79,9 +45,6 @@ export default function Home() {
               ))}
             </Physics>
           </Suspense>
-
-          {/* <Floor position={[0, -0.75, 0]} /> */}
-          {/* </ScrollControls> */}
         </Canvas>
       </div>
     </KeyboardControls>

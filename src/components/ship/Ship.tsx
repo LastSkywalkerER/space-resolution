@@ -10,9 +10,9 @@ import {
   RigidBodyProps,
   quat,
 } from '@react-three/rapier';
-import { Controls } from '@/app/page';
 import { CustomObjectLoader } from '../customObject';
 import { shipAssets } from './asssets';
+import { Controls } from '@/constants';
 
 export const MOVE_SPEED = 10;
 export const MOVE_ANGLE_SPEED = 50;
@@ -36,7 +36,6 @@ export const Ship: FC<RigidBodyProps> = (props) => {
     if (!shipRef.current) return;
 
     // apply angle impulse by key buttons
-    const curRotation = quat(shipRef.current.rotation());
     // if (right) {
     //   const incrementRotation = new THREE.Quaternion().setFromAxisAngle(
     //     new THREE.Vector3(0, -1, 0),
@@ -57,22 +56,14 @@ export const Ship: FC<RigidBodyProps> = (props) => {
       .normalize()
       .multiplyScalar(MOVE_ANGLE_SPEED);
     shipRef.current.applyTorqueImpulse(rotation, true);
+    const curRotation = quat(shipRef.current.rotation());
 
     // apply liner impulse by key buttons
-    const velocity = shipRef.current.linvel();
     direction
       .set(0, 0, +backward - +forward)
       .normalize()
       .multiplyScalar(MOVE_SPEED)
       .applyQuaternion(curRotation);
-    shipRef.current.setLinvel(
-      {
-        x: velocity.x,
-        y: 0,
-        z: velocity.z,
-      },
-      true,
-    );
     shipRef.current.applyImpulse(
       {
         x: direction.x,
@@ -91,6 +82,7 @@ export const Ship: FC<RigidBodyProps> = (props) => {
     <RigidBody
       ref={shipRef}
       mass={SHIP_MASS}
+      enabledTranslations={[true, false, true]}
       enabledRotations={[false, true, false]}
       linearDamping={LINEAR_DAMPING}
       angularDamping={ANGULAR_DAMPING}

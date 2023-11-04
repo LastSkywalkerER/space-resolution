@@ -4,6 +4,9 @@ import { Canvas } from '@react-three/fiber';
 import css from './index.module.css';
 import { CAMERA_HEIGHT, Ship } from '@/components/ship';
 import {
+  Environment,
+  EnvironmentCube,
+  EnvironmentMap,
   KeyboardControls,
   KeyboardControlsEntry,
   Sky,
@@ -35,7 +38,14 @@ export default function Home() {
           }}
         >
           <ambientLight intensity={1.5} />
-          <Sky sunPosition={[100, 20, 100]} />
+          {/* <Sky sunPosition={[100, 20, 100]} /> */}
+          <Environment
+            files={'./space/Space_sn_copy.hdr'}
+            background
+            // resolution={100000}
+            // blur={0.1}
+            // far={100000}
+          />
 
           <Suspense>
             <Physics gravity={[0, 0, 0]}>

@@ -5,25 +5,22 @@ import css from './index.module.css';
 import { CAMERA_HEIGHT, Ship } from '@/components/ship';
 import {
   Environment,
-  EnvironmentCube,
-  EnvironmentMap,
   KeyboardControls,
   KeyboardControlsEntry,
   Loader,
   PerformanceMonitor,
-  Sky,
   SoftShadows,
 } from '@react-three/drei';
-import { Physics, RigidBody } from '@react-three/rapier';
-import { Suspense, useEffect, useMemo, useState } from 'react';
-import { Asteroid } from '@/components/asteroid';
-import { Controls, asteroids } from '@/constants';
+import { Physics } from '@react-three/rapier';
+import { Suspense, useMemo, useState } from 'react';
+import { Controls } from '@/constants';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { Experience } from '@/components/experience';
 import { Gui } from '@/components/gui';
 
 export default function Home() {
   const [downgradedPerformance, setDowngradedPerformance] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
@@ -36,14 +33,14 @@ export default function Home() {
     [],
   );
 
-  useEffect(() => {
-    const audio = new Audio('/audios/ambient.mp3');
-    audio.play();
-  }, []);
-
   return (
     <div className="relative">
-      <Gui map={map} className="absolute z-10" />
+      <Gui
+        map={map}
+        className="absolute z-10"
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+      />
       <KeyboardControls map={map}>
         <div className={css.scene}>
           <Loader />
@@ -66,11 +63,13 @@ export default function Home() {
             <ambientLight intensity={1.5} />
             <Environment files={'./space/Space_sn_copy.hdr'} background />
 
-            <Suspense>
-              <Physics gravity={[0, 0, 0]}>
-                <Experience downgradedPerformance={downgradedPerformance} />
-              </Physics>
-            </Suspense>
+            {isPlaying && (
+              <Suspense fallback={null}>
+                <Physics gravity={[0, 0, 0]}>
+                  <Experience downgradedPerformance={downgradedPerformance} />
+                </Physics>
+              </Suspense>
+            )}
 
             {!downgradedPerformance && (
               // disable the postprocessing on low-end devices

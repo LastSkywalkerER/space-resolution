@@ -9,54 +9,78 @@ import {
   EnvironmentMap,
   KeyboardControls,
   KeyboardControlsEntry,
+  Loader,
+  PerformanceMonitor,
   Sky,
+  SoftShadows,
 } from '@react-three/drei';
 import { Physics, RigidBody } from '@react-three/rapier';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { Asteroid } from '@/components/asteroid';
 import { Controls, asteroids } from '@/constants';
+import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { Experience } from '@/components/experience';
+import { Gui } from '@/components/gui';
 
 export default function Home() {
+  const [downgradedPerformance, setDowngradedPerformance] = useState(false);
+
   const map = useMemo<KeyboardControlsEntry<Controls>[]>(
     () => [
       { name: Controls.Forward, keys: ['ArrowUp', 'KeyW'] },
       { name: Controls.Back, keys: ['ArrowDown', 'KeyS'] },
       { name: Controls.Left, keys: ['ArrowLeft', 'KeyA'] },
       { name: Controls.Right, keys: ['ArrowRight', 'KeyD'] },
+      { name: Controls.Fire, keys: ['Space'] },
     ],
     [],
   );
 
-  return (
-    <KeyboardControls map={map}>
-      <div className={css.scene}>
-        <Canvas
-          shadows
-          className={css.canvas}
-          camera={{
-            position: [0, CAMERA_HEIGHT, 0],
-          }}
-        >
-          <ambientLight intensity={1.5} />
-          {/* <Sky sunPosition={[100, 20, 100]} /> */}
-          <Environment
-            files={'./space/Space_sn_copy.hdr'}
-            background
-            // resolution={100000}
-            // blur={0.1}
-            // far={100000}
-          />
+  useEffect(() => {
+    const audio = new Audio('/audios/ambient.mp3');
+    audio.play();
+  }, []);
 
-          <Suspense>
-            <Physics gravity={[0, 0, 0]}>
-              <Ship />
-              {asteroids.map((position, index) => (
-                <Asteroid key={index} position={position} />
-              ))}
-            </Physics>
-          </Suspense>
-        </Canvas>
-      </div>
-    </KeyboardControls>
+  return (
+    <div className="relative">
+      <Gui map={map} className="absolute z-10" />
+      <KeyboardControls map={map}>
+        <div className={css.scene}>
+          <Loader />
+          <Canvas
+            shadows
+            className={css.canvas}
+            camera={{
+              position: [0, CAMERA_HEIGHT, 0],
+            }}
+            dpr={[1, 1.5]} // optimization to increase performance on retina/4k devices
+          >
+            <SoftShadows size={42} />
+            <PerformanceMonitor
+              // Detect low performance devices
+              onDecline={(fps) => {
+                setDowngradedPerformance(true);
+              }}
+            />
+
+            <ambientLight intensity={1.5} />
+            <Environment files={'./space/Space_sn_copy.hdr'} background />
+
+            <Suspense>
+              <Physics gravity={[0, 0, 0]}>
+                <Experience downgradedPerformance={downgradedPerformance} />
+              </Physics>
+            </Suspense>
+
+            {!downgradedPerformance && (
+              // disable the postprocessing on low-end devices
+              <EffectComposer disableNormalPass>
+                <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur />
+              </EffectComposer>
+            )}
+          </Canvas>
+        </div>
+      </KeyboardControls>
+    </div>
   );
 }

@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-three/drei": "^9.83.9",
     "@react-three/fiber": "^8.14.1",
+    "@react-three/postprocessing": "^2.15.10",
     "@react-three/rapier": "^1.1.2",
     "@types/node": "20.6.2",
     "@types/react": "18.2.21",

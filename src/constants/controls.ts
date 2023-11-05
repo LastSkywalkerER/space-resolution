@@ -3,5 +3,5 @@ export enum Controls {
   Back = 'back',
   Left = 'left',
   Right = 'right',
-  // jump = 'jump',
+  Fire = 'fire',
 }

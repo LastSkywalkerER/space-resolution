@@ -33,7 +33,7 @@ export const FIRE_RATE = 380;
 export const WEAPON_OFFSET = {
   x: 0,
   y: 1,
-  z: -5,
+  z: -7,
 };
 
 const direction = new THREE.Vector3();

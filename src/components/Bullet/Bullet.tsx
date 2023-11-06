@@ -8,7 +8,7 @@ import { FC, useEffect, useRef } from 'react';
 import { Euler, MeshBasicMaterial, Quaternion, Vector3 } from 'three';
 import { WEAPON_OFFSET } from '../ship';
 
-const BULLET_SPEED = 20;
+const BULLET_SPEED = 200;
 
 const bulletMaterial = new MeshBasicMaterial({
   color: 'green',
@@ -79,7 +79,7 @@ export const Bullet: FC<BulletProps> = ({ player, angle, position, onHit }) => {
           }}
         >
           <mesh position-z={0.25} material={bulletMaterial} castShadow>
-            <boxGeometry args={[0.05, 0.05, 0.5]} />
+            <boxGeometry args={[0.05, 0.05, 5]} />
           </mesh>
         </RigidBody>
       </group>

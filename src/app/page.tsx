@@ -56,7 +56,7 @@ export default function Home() {
             <PerformanceMonitor
               // Detect low performance devices
               onDecline={(fps) => {
-                setDowngradedPerformance(true);
+                // setDowngradedPerformance(true);
               }}
             />
 

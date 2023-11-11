@@ -35,8 +35,10 @@ export const CustomObjectLoader: FC<
   ]);
   const obj = useLoader(OBJLoader as any, objectPath);
 
+  let objClone = obj.clone();
+
   useLayoutEffect(() => {
-    obj.traverse(
+    objClone.traverse(
       (
         child: THREE.Mesh & {
           material: THREE.MeshStandardMaterial;
@@ -59,7 +61,7 @@ export const CustomObjectLoader: FC<
         }
       },
     );
-  }, [height, metalness, normal, obj, roughness, texture]);
+  }, [height, metalness, normal, objClone, roughness, texture]);
 
-  return <primitive object={obj} {...props} />;
+  return <primitive object={objClone} {...props} />;
 };

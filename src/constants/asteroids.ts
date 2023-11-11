@@ -8,5 +8,5 @@ export const createCoordinate = (
 
 export const asteroids: [number, number, number][] = Array.from(
   Array(50),
-  () => [createCoordinate(), 1, createCoordinate()],
+  () => [createCoordinate(), -1, createCoordinate()],
 );

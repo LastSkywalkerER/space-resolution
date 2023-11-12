@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber';
 import css from './index.module.css';
-import { CAMERA_HEIGHT, Ship } from '@/components/ship';
+import { Ship } from '@/components/ship';
 import {
   Environment,
   KeyboardControls,
@@ -48,7 +48,7 @@ export default function Home() {
             shadows
             className={css.canvas}
             camera={{
-              position: [0, CAMERA_HEIGHT, 0],
+              position: [0, 30, 0],
             }}
             dpr={[1, 1.5]} // optimization to increase performance on retina/4k devices
           >

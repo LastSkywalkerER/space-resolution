@@ -32,7 +32,7 @@ export const Gui: FC<GuiProps> = ({ map, className, isPlaying, setIsPlaying }) =
   };
 
   return (
-    <div className={cx("w-full h-full", className)}>
+    <div className={cx("w-full h-full text-white", className)}>
       <audio
         ref={audio}
         src="audios/ambient.mp3"

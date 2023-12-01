@@ -1,0 +1,175 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gameRegistry_",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount_",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyBullets",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getGameData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "bullets",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "x",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "y",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "z",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct Position",
+            "name": "currentPosition",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ethersAmount",
+            "type": "uint256"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "x",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "y",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "z",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct Position[]",
+            "name": "ethersPosition",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "ethersId",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "wreckedEthers",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PlayerStatsResponse",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "etherIds_",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bulletsAmount_",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "x",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "y",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "z",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct Position",
+        "name": "newPlayerPosition_",
+        "type": "tuple"
+      }
+    ],
+    "name": "registerAction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "int256",
+            "name": "x",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "y",
+            "type": "int256"
+          },
+          {
+            "internalType": "int256",
+            "name": "z",
+            "type": "int256"
+          }
+        ],
+        "internalType": "struct Position[]",
+        "name": "ethersPosition_",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "start",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

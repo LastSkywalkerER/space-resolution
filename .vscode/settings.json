@@ -1,0 +1,27 @@
+{
+  "javascript.validate.enable": false,
+  "[javascript, typescript, typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "files.eol": "\n",
+  "javascript.preferences.importModuleSpecifier": "relative",
+
+  "eslint.codeActionsOnSave.mode": "problems",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "cSpell.words": [
+    "bytea",
+    "IERC",
+    "Initializable",
+    "inversify",
+    "ipfs",
+    "Polkadot",
+    "Presale",
+    "struct",
+    "supabase",
+    "typeorm",
+    "Vitreus",
+    "Whitelabel"
+  ]
+}

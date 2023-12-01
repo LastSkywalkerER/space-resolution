@@ -1,12 +1,16 @@
-import { Environment } from '@react-three/drei';
+import { Environment } from "@react-three/drei";
 
-import { FC, useEffect, useState } from 'react';
-import { Bullet, BulletProps } from '../Bullet';
-import { BulletHit } from '../BulletHit';
-import { BulletData, Ship } from '../ship';
-import { Asteroid } from '../asteroid';
-import { asteroids } from '@/constants';
-import { Vector3 } from 'three';
+import { FC, useEffect, useState } from "react";
+import { Bullet, BulletProps } from "../Bullet";
+import { BulletHit } from "../BulletHit";
+import { Ship } from "../ship";
+import { Asteroid } from "../asteroid";
+import { asteroids } from "@/constants";
+import { Vector3 } from "three";
+import { useGame } from "@/services/game/game.service";
+import { Signer } from "ethers";
+import { BulletData } from "@/types/game.types";
+import { useSigner } from "@thirdweb-dev/react";
 
 interface Hit {
   id: string;
@@ -18,12 +22,18 @@ export interface ExperienceProps {
 }
 
 export const Experience: FC<ExperienceProps> = ({ downgradedPerformance }) => {
-  const [kills, setKills] = useState(0);
+  const { ethers, init, onShoot, position } = useGame();
+  const signer = useSigner();
 
   const [bullets, setBullets] = useState<BulletData[]>([]);
   const [hits, setHits] = useState<Hit[]>([]);
 
-  const onFire = (bullet: BulletData) => {
+  useEffect(() => {
+    signer && init(signer);
+  }, [signer]);
+
+  const onFire = async (bullet: BulletData) => {
+    await onShoot(bullet.position);
     setBullets((bullets) => [...bullets, bullet]);
   };
 
@@ -36,23 +46,15 @@ export const Experience: FC<ExperienceProps> = ({ downgradedPerformance }) => {
     setHits((hits) => hits.filter((h) => h.id !== hitId));
   };
 
-  const onKilled = () => {
-    setKills((oldState) => ++oldState);
-  };
-
   return (
     <>
-      <Ship downgradedPerformance={downgradedPerformance} onFire={onFire} />
-      {asteroids.map((position, index) => (
-        <Asteroid key={index} position={position} onKilled={onKilled} />
+      <Ship downgradedPerformance={downgradedPerformance} onFire={onFire} position={position} />
+      {ethers.map(({ id, position }) => (
+        <Asteroid key={id} position={position} id={id} />
       ))}
 
       {bullets.map((bullet) => (
-        <Bullet
-          key={bullet.id}
-          {...bullet}
-          onHit={(position) => onHit(bullet.id, position)}
-        />
+        <Bullet key={bullet.id} {...bullet} onHit={(position) => onHit(bullet.id, position)} />
       ))}
 
       {hits.map((hit) => (

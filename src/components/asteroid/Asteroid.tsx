@@ -4,40 +4,37 @@ import {
   RigidBody,
   RigidBodyProps,
   vec3,
-} from '@react-three/rapier';
-import { FC, useRef, useState } from 'react';
-import { BulletUserData } from '../Bullet';
-import { CustomFbxLoader } from '../customObject';
-import { asteroidAssets } from './asssets';
-import { onHit } from '@/api/ether/onHit';
-import { Vector3 } from 'three';
+} from "@react-three/rapier";
+import { FC, useRef, useState } from "react";
+import { BulletUserData } from "../Bullet";
+import { CustomFbxLoader } from "../customObject";
+import { asteroidAssets } from "./asssets";
+import { Vector3 } from "three";
+import { useGame } from "@/services/game/game.service";
+import { useSigner } from "@thirdweb-dev/react";
 
 export interface AsteroidProps {
-  onKilled: () => void;
+  onKilled?: () => void;
+  id: number;
 }
 
-export const Asteroid: FC<RigidBodyProps & AsteroidProps> = ({
-  onKilled,
-  ...props
-}) => {
+export const Asteroid: FC<RigidBodyProps & AsteroidProps> = ({ onKilled, id, ...props }) => {
   const rigidBody = useRef<RapierRigidBody | null>(null);
 
-  const [isDead, setIsDead] = useState(false);
+  const signer = useSigner();
+  const { onHit } = useGame();
 
+  const [isDead, setIsDead] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<Vector3 | null>(null);
 
   const intersectionHandler = async ({ other }: CollisionPayload) => {
-    if ((other.rigidBody?.userData as BulletUserData).type === 'bullet') {
+    if ((other.rigidBody?.userData as BulletUserData).type === "bullet" && signer) {
       setCurrentPosition(vec3(rigidBody.current?.translation()));
 
       try {
-        const tx = await onHit();
-        const receipt = await tx.wait();
-
-        if (receipt.status && receipt.status > 0) {
-          setIsDead(true);
-          onKilled();
-        }
+        await onHit(signer, vec3(rigidBody.current?.translation()), id);
+        setIsDead(true);
+        onKilled && onKilled();
       } catch (error) {
         setCurrentPosition(null);
       }
@@ -52,7 +49,7 @@ export const Asteroid: FC<RigidBodyProps & AsteroidProps> = ({
     return (
       <mesh position={currentPosition}>
         <boxGeometry />
-        <meshBasicMaterial color={'red'} />
+        <meshBasicMaterial color={"red"} />
       </mesh>
     );
   }
@@ -64,7 +61,7 @@ export const Asteroid: FC<RigidBodyProps & AsteroidProps> = ({
       angularVelocity={[0, 1, 0]}
       enabledTranslations={[true, false, true]}
       onIntersectionEnter={intersectionHandler}
-      colliders={'hull'}
+      colliders={"hull"}
     >
       <CustomFbxLoader {...asteroidAssets} />
     </RigidBody>

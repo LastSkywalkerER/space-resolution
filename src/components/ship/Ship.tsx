@@ -1,16 +1,17 @@
-'use client';
+"use client";
 
-import { GroupProps, useFrame } from '@react-three/fiber';
-import { CameraControls, useKeyboardControls } from '@react-three/drei';
-import { FC, useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-import { RapierRigidBody, RigidBody, quat, vec3 } from '@react-three/rapier';
-import { CustomObjectLoader } from '../customObject';
-import { shipAssets } from './asssets';
-import { Controls } from '@/constants';
-import { Group } from 'three';
-import { ShipInfo } from './ShipInfo';
-import { Specs, getShip } from '@/api/ship/getShip';
+import { GroupProps, useFrame } from "@react-three/fiber";
+import { CameraControls, useKeyboardControls } from "@react-three/drei";
+import { FC, useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { RapierRigidBody, RigidBody, quat, vec3 } from "@react-three/rapier";
+import { CustomObjectLoader } from "../customObject";
+import { shipAssets } from "./asssets";
+import { Controls } from "@/constants";
+import { Group } from "three";
+import { ShipInfo } from "./ShipInfo";
+import { Specs, getShip } from "@/api/ship/getShip";
+import { BulletData } from "@/types/game.types";
 
 // export const MOVE_SPEED = 10;
 // export const MOVE_ANGLE_SPEED = 50;
@@ -27,23 +28,12 @@ export const WEAPON_OFFSET = {
 const direction = new THREE.Vector3();
 const rotation = new THREE.Vector3();
 
-export interface BulletData {
-  id: string;
-  position: THREE.Vector3;
-  angle: THREE.Quaternion;
-  player: string;
-}
-
 export interface ShipProps {
   downgradedPerformance?: boolean;
   onFire: (bullet: BulletData) => void;
 }
 
-export const Ship: FC<GroupProps & ShipProps> = ({
-  onFire,
-  downgradedPerformance,
-  ...props
-}) => {
+export const Ship: FC<GroupProps & ShipProps> = ({ onFire, downgradedPerformance, ...props }) => {
   const [specs, setSpecs] = useState<Specs | null>(null);
 
   const rigidbody = useRef<RapierRigidBody | null>(null);
@@ -61,14 +51,8 @@ export const Ship: FC<GroupProps & ShipProps> = ({
 
   useFrame((state, delta) => {
     if (!specs) return;
-    const {
-      ANGULAR_DAMPING,
-      FIRE_RATE,
-      LINEAR_DAMPING,
-      MOVE_ANGLE_SPEED,
-      MOVE_SPEED,
-      SHIP_MASS,
-    } = specs;
+    const { ANGULAR_DAMPING, FIRE_RATE, LINEAR_DAMPING, MOVE_ANGLE_SPEED, MOVE_SPEED, SHIP_MASS } =
+      specs;
 
     if (!rigidbody.current) return;
 
@@ -110,10 +94,10 @@ export const Ship: FC<GroupProps & ShipProps> = ({
       if (Date.now() - lastShoot.current > FIRE_RATE) {
         lastShoot.current = Date.now();
         const newBullet = {
-          id: '-' + +new Date(),
+          id: "-" + +new Date(),
           position: vec3(rigidbody.current.translation()),
           angle: curRotation,
-          player: 'Ship',
+          player: "Ship",
         };
         onFire(newBullet);
       }
@@ -144,7 +128,7 @@ export const Ship: FC<GroupProps & ShipProps> = ({
         linearDamping={specs.LINEAR_DAMPING}
         angularDamping={specs.ANGULAR_DAMPING}
         type="dynamic"
-        colliders={'trimesh'}
+        colliders={"trimesh"}
       >
         <ShipInfo name="Ship" />
         <group ref={character}>

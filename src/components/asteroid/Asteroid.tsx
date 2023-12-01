@@ -28,14 +28,21 @@ export const Asteroid: FC<RigidBodyProps & AsteroidProps> = ({ onKilled, id, ...
   const [currentPosition, setCurrentPosition] = useState<Vector3 | null>(null);
 
   const intersectionHandler = async ({ other }: CollisionPayload) => {
-    if ((other.rigidBody?.userData as BulletUserData).type === "bullet" && signer) {
+    const userData = other.rigidBody?.userData as BulletUserData;
+
+    if (userData.type === "bullet" && signer) {
       setCurrentPosition(vec3(rigidBody.current?.translation()));
 
       try {
-        await onHit(signer, vec3(rigidBody.current?.translation()), id);
+        await onHit(signer, {
+          bulletId: userData.bulletId,
+          etherId: id,
+          hitPosition: vec3(rigidBody.current?.translation()),
+        });
         setIsDead(true);
         onKilled && onKilled();
       } catch (error) {
+        console.error(error);
         setCurrentPosition(null);
       }
     }

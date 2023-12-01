@@ -4,8 +4,10 @@ import abi from "./abi.json";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { Vector3 } from "three";
 import { type GameLogic as IGameLogic } from "./GameLogic.types";
+import { BulletData } from "@/types/game.types";
 
 const n = (b: BigNumberish) => parseFloat(utils.formatUnits(b, 0)) || 0;
+const r = (n?: number) => Math.round(n || 0) || 0;
 
 export class GameLogic {
   private contract = new Contract(gameLogicAddress, abi, new JsonRpcProvider(rpcUrl)) as IGameLogic;
@@ -41,15 +43,23 @@ export class GameLogic {
   public async registerAction(
     signer: Signer,
     {
-      bulletsAmount,
+      bullets,
       etherIds,
       newPlayerPosition,
-    }: { etherIds: number[]; bulletsAmount: number; newPlayerPosition: Vector3 },
+    }: { etherIds: number[]; bullets: BulletData[]; newPlayerPosition: Vector3 },
   ) {
-    return await this.contract.connect(signer).registerAction(etherIds, bulletsAmount, {
-      x: newPlayerPosition.x,
-      y: newPlayerPosition.y,
-      z: newPlayerPosition.z,
-    });
+    return await this.contract.connect(signer).hitRegister(
+      etherIds,
+      bullets.map(({ position, hitPosition, id }) => ({
+        startPosition: { x: r(position.x), y: r(position.y), z: r(position.z) },
+        endPosition: { x: r(hitPosition?.x), y: r(hitPosition?.y), z: r(hitPosition?.z) },
+        id,
+      })),
+      {
+        x: r(newPlayerPosition.x),
+        y: r(newPlayerPosition.y),
+        z: r(newPlayerPosition.z),
+      },
+    );
   }
 }

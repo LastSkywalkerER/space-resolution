@@ -2,242 +2,265 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-    BaseContract,
-    BigNumber,
-    BigNumberish,
-    BytesLike,
-    CallOverrides,
-    ContractTransaction,
-    Overrides,
-    PayableOverrides,
-    PopulatedTransaction,
-    Signer,
-    utils,
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  BytesLike,
+  CallOverrides,
+  ContractTransaction,
+  Overrides,
+  PayableOverrides,
+  PopulatedTransaction,
+  Signer,
+  utils,
 } from "ethers";
 import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-    TypedEventFilter,
-    TypedEvent,
-    TypedListener,
-    OnEvent,
-} from "../common";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "../common";
 
 export type PositionStruct = {
-    x: BigNumberish;
-    y: BigNumberish;
-    z: BigNumberish;
+  x: BigNumberish;
+  y: BigNumberish;
+  z: BigNumberish;
 };
 
 export type PositionStructOutput = [BigNumber, BigNumber, BigNumber] & {
-    x: BigNumber;
-    y: BigNumber;
-    z: BigNumber;
+  x: BigNumber;
+  y: BigNumber;
+  z: BigNumber;
 };
 
 export type PlayerStatsResponseStruct = {
-    bullets: BigNumberish;
-    currentPosition: PositionStruct;
-    ethersAmount: BigNumberish;
-    ethersPosition: PositionStruct[];
-    ethersId: BigNumberish[];
-    wreckedEthers: BigNumberish;
+  bullets: BigNumberish;
+  currentPosition: PositionStruct;
+  ethersAmount: BigNumberish;
+  ethersPosition: PositionStruct[];
+  ethersId: BigNumberish[];
+  wreckedEthers: BigNumberish;
 };
 
 export type PlayerStatsResponseStructOutput = [
-    BigNumber,
-    PositionStructOutput,
-    BigNumber,
-    PositionStructOutput[],
-    BigNumber[],
-    BigNumber
+  BigNumber,
+  PositionStructOutput,
+  BigNumber,
+  PositionStructOutput[],
+  BigNumber[],
+  BigNumber,
 ] & {
-    bullets: BigNumber;
-    currentPosition: PositionStructOutput;
-    ethersAmount: BigNumber;
-    ethersPosition: PositionStructOutput[];
-    ethersId: BigNumber[];
-    wreckedEthers: BigNumber;
+  bullets: BigNumber;
+  currentPosition: PositionStructOutput;
+  ethersAmount: BigNumber;
+  ethersPosition: PositionStructOutput[];
+  ethersId: BigNumber[];
+  wreckedEthers: BigNumber;
+};
+
+export type BulletStruct = {
+  startPosition: PositionStruct;
+  endPosition: PositionStruct;
+  id: BigNumberish;
+};
+
+export type BulletStructOutput = [PositionStructOutput, PositionStructOutput, BigNumber] & {
+  startPosition: PositionStructOutput;
+  endPosition: PositionStructOutput;
+  id: BigNumber;
 };
 
 export interface GameLogicInterface extends utils.Interface {
-    functions: {
-        "buyBullets(uint256)": FunctionFragment;
-        "getGameData()": FunctionFragment;
-        "registerAction(uint256[],uint256,(int256,int256,int256))": FunctionFragment;
-        "start((int256,int256,int256)[])": FunctionFragment;
-    };
+  functions: {
+    "PERCENT_BASE()": FunctionFragment;
+    "bulletPrice()": FunctionFragment;
+    "buyBullets(uint256)": FunctionFragment;
+    "gameRegistry()": FunctionFragment;
+    "getGameData()": FunctionFragment;
+    "hitRegister(uint256[],((int256,int256,int256),(int256,int256,int256),uint256)[],(int256,int256,int256))": FunctionFragment;
+    "start((int256,int256,int256)[])": FunctionFragment;
+  };
 
-    getFunction(
-        nameOrSignatureOrTopic:
-            | "buyBullets"
-            | "getGameData"
-            | "registerAction"
-            | "start"
-    ): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "PERCENT_BASE"
+      | "bulletPrice"
+      | "buyBullets"
+      | "gameRegistry"
+      | "getGameData"
+      | "hitRegister"
+      | "start",
+  ): FunctionFragment;
 
-    encodeFunctionData(
-        functionFragment: "buyBullets",
-        values: [BigNumberish]
-    ): string;
-    encodeFunctionData(
-        functionFragment: "getGameData",
-        values?: undefined
-    ): string;
-    encodeFunctionData(
-        functionFragment: "registerAction",
-        values: [BigNumberish[], BigNumberish, PositionStruct]
-    ): string;
-    encodeFunctionData(
-        functionFragment: "start",
-        values: [PositionStruct[]]
-    ): string;
+  encodeFunctionData(functionFragment: "PERCENT_BASE", values?: undefined): string;
+  encodeFunctionData(functionFragment: "bulletPrice", values?: undefined): string;
+  encodeFunctionData(functionFragment: "buyBullets", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "gameRegistry", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getGameData", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "hitRegister",
+    values: [BigNumberish[], BulletStruct[], PositionStruct],
+  ): string;
+  encodeFunctionData(functionFragment: "start", values: [PositionStruct[]]): string;
 
-    decodeFunctionResult(functionFragment: "buyBullets", data: BytesLike): Result;
-    decodeFunctionResult(
-        functionFragment: "getGameData",
-        data: BytesLike
-    ): Result;
-    decodeFunctionResult(
-        functionFragment: "registerAction",
-        data: BytesLike
-    ): Result;
-    decodeFunctionResult(functionFragment: "start", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "PERCENT_BASE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bulletPrice", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "buyBullets", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "gameRegistry", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getGameData", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hitRegister", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "start", data: BytesLike): Result;
 
-    events: {};
+  events: {};
 }
 
 export interface GameLogic extends BaseContract {
-    connect(signerOrProvider: Signer | Provider | string): this;
-    attach(addressOrName: string): this;
-    deployed(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-    interface: GameLogicInterface;
+  interface: GameLogicInterface;
 
-    queryFilter<TEvent extends TypedEvent>(
-        event: TypedEventFilter<TEvent>,
-        fromBlockOrBlockhash?: string | number | undefined,
-        toBlock?: string | number | undefined
-    ): Promise<Array<TEvent>>;
+  queryFilter<TEvent extends TypedEvent>(
+    event: TypedEventFilter<TEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined,
+  ): Promise<Array<TEvent>>;
 
-    listeners<TEvent extends TypedEvent>(
-        eventFilter?: TypedEventFilter<TEvent>
-    ): Array<TypedListener<TEvent>>;
-    listeners(eventName?: string): Array<Listener>;
-    removeAllListeners<TEvent extends TypedEvent>(
-        eventFilter: TypedEventFilter<TEvent>
-    ): this;
-    removeAllListeners(eventName?: string): this;
-    off: OnEvent<this>;
-    on: OnEvent<this>;
-    once: OnEvent<this>;
-    removeListener: OnEvent<this>;
+  listeners<TEvent extends TypedEvent>(
+    eventFilter?: TypedEventFilter<TEvent>,
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
+  removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
-    functions: {
-        buyBullets(
-            amount_: BigNumberish,
-            overrides?: PayableOverrides & { from?: string }
-        ): Promise<ContractTransaction>;
+  functions: {
+    PERCENT_BASE(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-        getGameData(
-            overrides?: CallOverrides
-        ): Promise<[PlayerStatsResponseStructOutput]>;
-
-        registerAction(
-            etherIds_: BigNumberish[],
-            bulletsAmount_: BigNumberish,
-            newPlayerPosition_: PositionStruct,
-            overrides?: Overrides & { from?: string }
-        ): Promise<ContractTransaction>;
-
-        start(
-            ethersPosition_: PositionStruct[],
-            overrides?: Overrides & { from?: string }
-        ): Promise<ContractTransaction>;
-    };
+    bulletPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     buyBullets(
-        amount_: BigNumberish,
-        overrides?: PayableOverrides & { from?: string }
+      amount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string },
     ): Promise<ContractTransaction>;
 
-    getGameData(
-        overrides?: CallOverrides
-    ): Promise<PlayerStatsResponseStructOutput>;
+    gameRegistry(overrides?: CallOverrides): Promise<[string]>;
 
-    registerAction(
-        etherIds_: BigNumberish[],
-        bulletsAmount_: BigNumberish,
-        newPlayerPosition_: PositionStruct,
-        overrides?: Overrides & { from?: string }
+    getGameData(overrides?: CallOverrides): Promise<[PlayerStatsResponseStructOutput]>;
+
+    hitRegister(
+      etherIds_: BigNumberish[],
+      bullets_: BulletStruct[],
+      newPlayerPosition_: PositionStruct,
+      overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
     start(
-        ethersPosition_: PositionStruct[],
-        overrides?: Overrides & { from?: string }
+      ethersPosition_: PositionStruct[],
+      overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
+  };
 
-    callStatic: {
-        buyBullets(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+  PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
 
-        getGameData(
-            overrides?: CallOverrides
-        ): Promise<PlayerStatsResponseStructOutput>;
+  bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-        registerAction(
-            etherIds_: BigNumberish[],
-            bulletsAmount_: BigNumberish,
-            newPlayerPosition_: PositionStruct,
-            overrides?: CallOverrides
-        ): Promise<void>;
+  buyBullets(
+    amount_: BigNumberish,
+    overrides?: PayableOverrides & { from?: string },
+  ): Promise<ContractTransaction>;
 
-        start(
-            ethersPosition_: PositionStruct[],
-            overrides?: CallOverrides
-        ): Promise<void>;
-    };
+  gameRegistry(overrides?: CallOverrides): Promise<string>;
 
-    filters: {};
+  getGameData(overrides?: CallOverrides): Promise<PlayerStatsResponseStructOutput>;
 
-    estimateGas: {
-        buyBullets(
-            amount_: BigNumberish,
-            overrides?: PayableOverrides & { from?: string }
-        ): Promise<BigNumber>;
+  hitRegister(
+    etherIds_: BigNumberish[],
+    bullets_: BulletStruct[],
+    newPlayerPosition_: PositionStruct,
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
 
-        getGameData(overrides?: CallOverrides): Promise<BigNumber>;
+  start(
+    ethersPosition_: PositionStruct[],
+    overrides?: Overrides & { from?: string },
+  ): Promise<ContractTransaction>;
 
-        registerAction(
-            etherIds_: BigNumberish[],
-            bulletsAmount_: BigNumberish,
-            newPlayerPosition_: PositionStruct,
-            overrides?: Overrides & { from?: string }
-        ): Promise<BigNumber>;
+  callStatic: {
+    PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
 
-        start(
-            ethersPosition_: PositionStruct[],
-            overrides?: Overrides & { from?: string }
-        ): Promise<BigNumber>;
-    };
+    bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    populateTransaction: {
-        buyBullets(
-            amount_: BigNumberish,
-            overrides?: PayableOverrides & { from?: string }
-        ): Promise<PopulatedTransaction>;
+    buyBullets(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-        getGameData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    gameRegistry(overrides?: CallOverrides): Promise<string>;
 
-        registerAction(
-            etherIds_: BigNumberish[],
-            bulletsAmount_: BigNumberish,
-            newPlayerPosition_: PositionStruct,
-            overrides?: Overrides & { from?: string }
-        ): Promise<PopulatedTransaction>;
+    getGameData(overrides?: CallOverrides): Promise<PlayerStatsResponseStructOutput>;
 
-        start(
-            ethersPosition_: PositionStruct[],
-            overrides?: Overrides & { from?: string }
-        ): Promise<PopulatedTransaction>;
-    };
+    hitRegister(
+      etherIds_: BigNumberish[],
+      bullets_: BulletStruct[],
+      newPlayerPosition_: PositionStruct,
+      overrides?: CallOverrides,
+    ): Promise<void>;
+
+    start(ethersPosition_: PositionStruct[], overrides?: CallOverrides): Promise<void>;
+  };
+
+  filters: {};
+
+  estimateGas: {
+    PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
+
+    buyBullets(
+      amount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    gameRegistry(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getGameData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    hitRegister(
+      etherIds_: BigNumberish[],
+      bullets_: BulletStruct[],
+      newPlayerPosition_: PositionStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+
+    start(
+      ethersPosition_: PositionStruct[],
+      overrides?: Overrides & { from?: string },
+    ): Promise<BigNumber>;
+  };
+
+  populateTransaction: {
+    PERCENT_BASE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    bulletPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    buyBullets(
+      amount_: BigNumberish,
+      overrides?: PayableOverrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    gameRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getGameData(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    hitRegister(
+      etherIds_: BigNumberish[],
+      bullets_: BulletStruct[],
+      newPlayerPosition_: PositionStruct,
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+
+    start(
+      ethersPosition_: PositionStruct[],
+      overrides?: Overrides & { from?: string },
+    ): Promise<PopulatedTransaction>;
+  };
 }

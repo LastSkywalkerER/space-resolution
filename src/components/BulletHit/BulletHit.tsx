@@ -1,9 +1,9 @@
-import { Instance, Instances } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { FC, useEffect, useMemo, useRef } from 'react';
-import { Color, MathUtils, Vector3 } from 'three';
+import { Instance, Instances } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { FC, useEffect, useMemo, useRef } from "react";
+import { Color, MathUtils, Vector3 } from "three";
 
-const bulletHitcolor = new Color('green');
+const bulletHitcolor = new Color("green");
 bulletHitcolor.multiplyScalar(12);
 
 interface AnimatedBoxProps {
@@ -18,10 +18,7 @@ const AnimatedBox: FC<AnimatedBoxProps> = ({ scale, target, speed }) => {
     if (!ref.current) return;
 
     if (ref.current.scale.x > 0) {
-      ref.current.scale.x =
-        ref.current.scale.y =
-        ref.current.scale.z -=
-          speed * delta;
+      ref.current.scale.x = ref.current.scale.y = ref.current.scale.z -= speed * delta;
     }
     ref.current.position.lerp(target, speed);
   });
@@ -29,17 +26,13 @@ const AnimatedBox: FC<AnimatedBoxProps> = ({ scale, target, speed }) => {
 };
 
 export interface BulletHitProps {
-  id: string;
+  id: number;
   nb?: number;
   position: Vector3;
   onEnded: () => void;
 }
 
-export const BulletHit: FC<BulletHitProps> = ({
-  nb = 100,
-  position,
-  onEnded,
-}) => {
+export const BulletHit: FC<BulletHitProps> = ({ nb = 100, position, onEnded }) => {
   const boxes = useMemo(
     () =>
       Array.from({ length: nb }, () => ({

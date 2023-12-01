@@ -1,6 +1,7 @@
 export interface BulletData {
-  id: string;
+  id: number;
   position: THREE.Vector3;
+  hitPosition?: THREE.Vector3;
   angle: THREE.Quaternion;
   player: string;
 }

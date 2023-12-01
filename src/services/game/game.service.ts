@@ -3,11 +3,12 @@ import { Vector3 } from "three";
 import { GameLogic } from "@/services/game/gameLogic/GameLogic";
 import { asteroids } from "@/constants";
 import { Signer } from "ethers";
+import { BulletData } from "@/types/game.types";
 
 type Game = {
   position: Vector3;
   bullets: number;
-  usedBullets: number;
+  usedBullets: Record<string, BulletData>;
   ethers: { id: number; position: Vector3 }[];
   wreckedEthers: number;
 
@@ -15,14 +16,17 @@ type Game = {
 
   init: (signer: Signer) => Promise<void>;
   buyBullets: (signer: Signer, amount: number) => Promise<void>;
-  onShoot: (position: Vector3) => void;
-  onHit: (signer: Signer, position: Vector3, etherId: number) => Promise<void>;
+  onShoot: (bullet: BulletData) => void;
+  onHit: (
+    signer: Signer,
+    data: { hitPosition: Vector3; etherId: number; bulletId: number },
+  ) => Promise<void>;
   loadGameData: (signer: Signer) => Promise<void>;
 };
 
 export const useGame = create<Game>()((set, get) => ({
   bullets: 0,
-  usedBullets: 0,
+  usedBullets: {},
   ethers: [],
   position: new Vector3(0, 0, 0),
   wreckedEthers: 0,
@@ -92,8 +96,7 @@ export const useGame = create<Game>()((set, get) => ({
       throw Error("Buy failed");
     }
   },
-  //   TODO: add hit position logic
-  onShoot: (_: Vector3) => {
+  onShoot: (bullet: BulletData) => {
     const { bullets } = get();
 
     if (!bullets) throw Error("Buy bullets");
@@ -101,11 +104,13 @@ export const useGame = create<Game>()((set, get) => ({
     set((state) => ({
       ...state,
       bullets: state.bullets === 0 ? 0 : --state.bullets,
-      usedBullets: state.bullets === 0 ? state.usedBullets : ++state.usedBullets,
+      usedBullets: { ...state.usedBullets, [bullet.id]: bullet },
     }));
   },
-  //   TODO: add hit position logic
-  onHit: async (signer: Signer, _: Vector3, etherId: number) => {
+  onHit: async (
+    signer: Signer,
+    { bulletId, etherId, hitPosition }: { hitPosition: Vector3; etherId: number; bulletId: number },
+  ) => {
     const { gameLogic, usedBullets, position, bullets } = get();
 
     if (!bullets) throw Error("You have no bullets");
@@ -113,7 +118,11 @@ export const useGame = create<Game>()((set, get) => ({
     const tx = await gameLogic.registerAction(signer, {
       newPlayerPosition: position,
       etherIds: [etherId],
-      bulletsAmount: usedBullets,
+      bullets: Object.values(usedBullets).map(({ id, ...rest }) => ({
+        ...rest,
+        id,
+        hitPosition: id === bulletId ? hitPosition : undefined,
+      })),
     });
     const { status } = await tx.wait();
 
@@ -123,6 +132,7 @@ export const useGame = create<Game>()((set, get) => ({
         ethers: state.ethers.filter(({ id }) => id !== etherId),
         wreckedEthers: ++state.wreckedEthers,
         position,
+        usedBullets: {},
       }));
     } else {
       throw Error("Hit failed");

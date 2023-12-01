@@ -94,7 +94,7 @@ export const Ship: FC<GroupProps & ShipProps> = ({ onFire, downgradedPerformance
       if (Date.now() - lastShoot.current > FIRE_RATE) {
         lastShoot.current = Date.now();
         const newBullet = {
-          id: "-" + +new Date(),
+          id: +new Date(),
           position: vec3(rigidbody.current.translation()),
           angle: curRotation,
           player: "Ship",

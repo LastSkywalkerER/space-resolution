@@ -5,10 +5,60 @@
         "internalType": "address",
         "name": "gameRegistry_",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "bulletPrice_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "balanceReceiver_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "winRate_",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "feeRate_",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+  {
+    "inputs": [],
+    "name": "PERCENT_BASE",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "bulletPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -21,6 +71,19 @@
     "name": "buyBullets",
     "outputs": [],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gameRegistry",
+    "outputs": [
+      {
+        "internalType": "contract GameRegistry",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -110,9 +173,60 @@
         "type": "uint256[]"
       },
       {
-        "internalType": "uint256",
-        "name": "bulletsAmount_",
-        "type": "uint256"
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "x",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "y",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "z",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct Position",
+            "name": "startPosition",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "int256",
+                "name": "x",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "y",
+                "type": "int256"
+              },
+              {
+                "internalType": "int256",
+                "name": "z",
+                "type": "int256"
+              }
+            ],
+            "internalType": "struct Position",
+            "name": "endPosition",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Bullet[]",
+        "name": "bullets_",
+        "type": "tuple[]"
       },
       {
         "components": [
@@ -137,7 +251,7 @@
         "type": "tuple"
       }
     ],
-    "name": "registerAction",
+    "name": "hitRegister",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -171,5 +285,9 @@
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
   }
 ]

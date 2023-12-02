@@ -10,7 +10,7 @@ import { BulletUserData } from "../Bullet";
 import { CustomFbxLoader } from "../customObject";
 import { asteroidAssets } from "./asssets";
 import { Vector3 } from "three";
-import { useGame } from "@/services/game/game.service";
+import { useGame } from "@/services/game.service";
 import { useSigner } from "@thirdweb-dev/react";
 
 export interface AsteroidProps {

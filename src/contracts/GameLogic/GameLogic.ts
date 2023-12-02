@@ -1,22 +1,23 @@
-import { BigNumberish, Contract, Signer, utils } from "ethers";
-import { gameLogicAddress, rpcUrl } from "@/constants/constants";
+import { Signer, utils } from "ethers";
+import { gameLogicAddress } from "@/constants/constants";
 import abi from "./abi.json";
-import { JsonRpcProvider } from "@ethersproject/providers";
 import { Vector3 } from "three";
 import { type GameLogic as IGameLogic } from "./GameLogic.types";
 import { BulletData } from "@/types/game.types";
+import { GameContract } from "../GameContract";
+import { n, r, rk, nk } from "@/helpers/ethSpecsParse";
 
-const n = (b: BigNumberish) => parseFloat(utils.formatUnits(b, 0)) || 0;
-const r = (n?: number) => Math.round(n || 0) || 0;
-
-export class GameLogic {
-  private contract = new Contract(gameLogicAddress, abi, new JsonRpcProvider(rpcUrl)) as IGameLogic;
+export class GameLogic extends GameContract<IGameLogic> {
   public bulletPrice = 0.0001;
+
+  constructor() {
+    super({ address: gameLogicAddress, abi });
+  }
 
   public async start(signer: Signer, ethersPosition: Vector3[]) {
     return await this.contract
       .connect(signer)
-      .start(ethersPosition.map(({ x, y, z }) => ({ x, y, z })));
+      .start(ethersPosition.map(({ x, y, z }) => ({ x: rk(x), y: rk(y), z: rk(z) })));
   }
   public async buyBullets(signer: Signer, amount: number) {
     return await this.contract
@@ -27,11 +28,11 @@ export class GameLogic {
     const data = await this.contract.connect(signer).getGameData();
 
     return {
-      ethersPosition: data.ethersPosition.map(({ x, y, z }) => new Vector3(n(x), n(y), n(z))),
+      ethersPosition: data.ethersPosition.map(({ x, y, z }) => new Vector3(nk(x), nk(y), nk(z))),
       currentPosition: new Vector3(
-        n(data.currentPosition.x),
-        n(data.currentPosition.y),
-        n(data.currentPosition.z),
+        nk(data.currentPosition.x),
+        nk(data.currentPosition.y),
+        nk(data.currentPosition.z),
       ),
       wreckedEthers: n(data.wreckedEthers),
       ethersId: data.ethersId.map((id) => n(id)),
@@ -51,14 +52,14 @@ export class GameLogic {
     return await this.contract.connect(signer).hitRegister(
       etherIds,
       bullets.map(({ position, hitPosition, id }) => ({
-        startPosition: { x: r(position.x), y: r(position.y), z: r(position.z) },
-        endPosition: { x: r(hitPosition?.x), y: r(hitPosition?.y), z: r(hitPosition?.z) },
+        startPosition: { x: rk(position.x), y: rk(position.y), z: rk(position.z) },
+        endPosition: { x: rk(hitPosition?.x), y: rk(hitPosition?.y), z: rk(hitPosition?.z) },
         id,
       })),
       {
-        x: r(newPlayerPosition.x),
-        y: r(newPlayerPosition.y),
-        z: r(newPlayerPosition.z),
+        x: rk(newPlayerPosition.x),
+        y: rk(newPlayerPosition.y),
+        z: rk(newPlayerPosition.z),
       },
     );
   }

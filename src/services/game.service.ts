@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { Vector3 } from "three";
-import { GameLogic } from "@/services/game/gameLogic/GameLogic";
 import { asteroids } from "@/constants";
 import { Signer } from "ethers";
 import { BulletData } from "@/types/game.types";
+import { GameLogic } from "@/contracts/GameLogic";
 
 type Game = {
   position: Vector3;
@@ -70,7 +70,7 @@ export const useGame = create<Game>()((set, get) => ({
   loadGameData: async (signer: Signer) => {
     const { gameLogic } = get();
 
-    const { bullets, ethersPosition, currentPosition, wreckedEthers, ethersId, ethersAmount } =
+    const { bullets, ethersPosition, currentPosition, wreckedEthers, ethersId } =
       await gameLogic.getGameData(signer);
 
     set((state) => ({

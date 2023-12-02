@@ -7,6 +7,11 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "ship_",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "bulletPrice_",
         "type": "uint256"
@@ -25,10 +30,42 @@
         "internalType": "uint256",
         "name": "feeRate_",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "domainName_",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "domainVersion_",
+        "type": "string"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidShortString",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "str",
+        "type": "string"
+      }
+    ],
+    "name": "StringTooLong",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "EIP712DomainChanged",
+    "type": "event"
   },
   {
     "stateMutability": "payable",
@@ -39,9 +76,22 @@
     "name": "PERCENT_BASE",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint16",
         "name": "",
-        "type": "uint256"
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SPECS_MULTIPLIER",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -75,10 +125,53 @@
   },
   {
     "inputs": [],
+    "name": "eip712Domain",
+    "outputs": [
+      {
+        "internalType": "bytes1",
+        "name": "fields",
+        "type": "bytes1"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "chainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "verifyingContract",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "extensions",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "gameRegistry",
     "outputs": [
       {
-        "internalType": "contract GameRegistry",
+        "internalType": "contract IGameRegistry",
         "name": "",
         "type": "address"
       }
@@ -254,6 +347,19 @@
     "name": "hitRegister",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "ship",
+    "outputs": [
+      {
+        "internalType": "contract IShip",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

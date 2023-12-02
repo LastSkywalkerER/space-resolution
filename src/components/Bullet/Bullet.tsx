@@ -1,8 +1,6 @@
 import { CollisionPayload, RapierRigidBody, RigidBody, vec3 } from "@react-three/rapier";
 import { FC, useEffect, useRef } from "react";
 import { Euler, MeshBasicMaterial, Quaternion, Vector3 } from "three";
-import { WEAPON_OFFSET } from "../ship";
-import { id } from "ethers/lib/utils";
 
 const BULLET_SPEED = 200;
 
@@ -25,10 +23,11 @@ export interface BulletProps {
   player: string;
   angle: Quaternion;
   position: { x: number; y: number; z: number };
+  WEAPON_OFFSET: Vector3;
   onHit: (vector: Vector3) => void;
 }
 
-export const Bullet: FC<BulletProps> = ({ id, player, angle, position, onHit }) => {
+export const Bullet: FC<BulletProps> = ({ id, player, angle, position, WEAPON_OFFSET, onHit }) => {
   const rigidbody = useRef<RapierRigidBody | null>(null);
 
   useEffect(() => {

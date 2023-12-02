@@ -1,7 +1,7 @@
 import { KeyboardControlsEntry } from "@react-three/drei";
 import { FC, useEffect, useRef, useState } from "react";
 import cx from "classnames";
-import { useGame } from "@/services/game/game.service";
+import { useGame } from "@/services/game.service";
 import { utils } from "ethers";
 import { ConnectWallet, Web3Button, useSigner } from "@thirdweb-dev/react";
 

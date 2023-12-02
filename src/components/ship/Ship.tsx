@@ -10,20 +10,7 @@ import { shipAssets } from "./asssets";
 import { Controls } from "@/constants";
 import { Group } from "three";
 import { ShipInfo } from "./ShipInfo";
-import { Specs, getShip } from "@/api/ship/getShip";
-import { BulletData } from "@/types/game.types";
-
-// export const MOVE_SPEED = 10;
-// export const MOVE_ANGLE_SPEED = 50;
-// export const SHIP_MASS = 10;
-// export const LINEAR_DAMPING = 0.5;
-// export const ANGULAR_DAMPING = 1.5;
-// export const FIRE_RATE = 380;
-export const WEAPON_OFFSET = {
-  x: 0,
-  y: 1,
-  z: -3,
-};
+import { BulletData, ShipSpecs } from "@/types/game.types";
 
 const direction = new THREE.Vector3();
 const rotation = new THREE.Vector3();
@@ -31,11 +18,15 @@ const rotation = new THREE.Vector3();
 export interface ShipProps {
   downgradedPerformance?: boolean;
   onFire: (bullet: BulletData) => void;
+  specs: ShipSpecs;
 }
 
-export const Ship: FC<GroupProps & ShipProps> = ({ onFire, downgradedPerformance, ...props }) => {
-  const [specs, setSpecs] = useState<Specs | null>(null);
-
+export const Ship: FC<GroupProps & ShipProps> = ({
+  onFire,
+  downgradedPerformance,
+  specs,
+  ...props
+}) => {
   const rigidbody = useRef<RapierRigidBody | null>(null);
   const group = useRef<Group<THREE.Object3DEventMap> | null>(null);
   const character = useRef<Group<THREE.Object3DEventMap> | null>(null);
@@ -51,8 +42,7 @@ export const Ship: FC<GroupProps & ShipProps> = ({ onFire, downgradedPerformance
 
   useFrame((state, delta) => {
     if (!specs) return;
-    const { ANGULAR_DAMPING, FIRE_RATE, LINEAR_DAMPING, MOVE_ANGLE_SPEED, MOVE_SPEED, SHIP_MASS } =
-      specs;
+    const { FIRE_RATE, MOVE_ANGLE_SPEED, MOVE_SPEED } = specs;
 
     if (!rigidbody.current) return;
 
@@ -103,10 +93,6 @@ export const Ship: FC<GroupProps & ShipProps> = ({ onFire, downgradedPerformance
       }
     }
   });
-
-  useEffect(() => {
-    getShip().then(setSpecs);
-  }, []);
 
   useEffect(() => {
     if (character.current && directionalLight.current) {

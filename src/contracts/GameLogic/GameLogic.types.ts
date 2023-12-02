@@ -14,7 +14,7 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "../common";
 
@@ -70,46 +70,67 @@ export type BulletStructOutput = [PositionStructOutput, PositionStructOutput, Bi
 export interface GameLogicInterface extends utils.Interface {
   functions: {
     "PERCENT_BASE()": FunctionFragment;
+    "SPECS_MULTIPLIER()": FunctionFragment;
     "bulletPrice()": FunctionFragment;
     "buyBullets(uint256)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "gameRegistry()": FunctionFragment;
     "getGameData()": FunctionFragment;
     "hitRegister(uint256[],((int256,int256,int256),(int256,int256,int256),uint256)[],(int256,int256,int256))": FunctionFragment;
+    "ship()": FunctionFragment;
     "start((int256,int256,int256)[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "PERCENT_BASE"
+      | "SPECS_MULTIPLIER"
       | "bulletPrice"
       | "buyBullets"
+      | "eip712Domain"
       | "gameRegistry"
       | "getGameData"
       | "hitRegister"
+      | "ship"
       | "start",
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "PERCENT_BASE", values?: undefined): string;
+  encodeFunctionData(functionFragment: "SPECS_MULTIPLIER", values?: undefined): string;
   encodeFunctionData(functionFragment: "bulletPrice", values?: undefined): string;
   encodeFunctionData(functionFragment: "buyBullets", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "eip712Domain", values?: undefined): string;
   encodeFunctionData(functionFragment: "gameRegistry", values?: undefined): string;
   encodeFunctionData(functionFragment: "getGameData", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "hitRegister",
     values: [BigNumberish[], BulletStruct[], PositionStruct],
   ): string;
+  encodeFunctionData(functionFragment: "ship", values?: undefined): string;
   encodeFunctionData(functionFragment: "start", values: [PositionStruct[]]): string;
 
   decodeFunctionResult(functionFragment: "PERCENT_BASE", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "SPECS_MULTIPLIER", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "bulletPrice", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buyBullets", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "eip712Domain", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "gameRegistry", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getGameData", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hitRegister", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ship", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "start", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "EIP712DomainChanged()": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "EIP712DomainChanged"): EventFragment;
 }
+
+export interface EIP712DomainChangedEventObject {}
+export type EIP712DomainChangedEvent = TypedEvent<[], EIP712DomainChangedEventObject>;
+
+export type EIP712DomainChangedEventFilter = TypedEventFilter<EIP712DomainChangedEvent>;
 
 export interface GameLogic extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -136,7 +157,9 @@ export interface GameLogic extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    PERCENT_BASE(overrides?: CallOverrides): Promise<[BigNumber]>;
+    PERCENT_BASE(overrides?: CallOverrides): Promise<[number]>;
+
+    SPECS_MULTIPLIER(overrides?: CallOverrides): Promise<[number]>;
 
     bulletPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -144,6 +167,18 @@ export interface GameLogic extends BaseContract {
       amount_: BigNumberish,
       overrides?: PayableOverrides & { from?: string },
     ): Promise<ContractTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
 
     gameRegistry(overrides?: CallOverrides): Promise<[string]>;
 
@@ -156,13 +191,17 @@ export interface GameLogic extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
 
+    ship(overrides?: CallOverrides): Promise<[string]>;
+
     start(
       ethersPosition_: PositionStruct[],
       overrides?: Overrides & { from?: string },
     ): Promise<ContractTransaction>;
   };
 
-  PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
+  PERCENT_BASE(overrides?: CallOverrides): Promise<number>;
+
+  SPECS_MULTIPLIER(overrides?: CallOverrides): Promise<number>;
 
   bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -170,6 +209,18 @@ export interface GameLogic extends BaseContract {
     amount_: BigNumberish,
     overrides?: PayableOverrides & { from?: string },
   ): Promise<ContractTransaction>;
+
+  eip712Domain(overrides?: CallOverrides): Promise<
+    [string, string, string, BigNumber, string, string, BigNumber[]] & {
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+    }
+  >;
 
   gameRegistry(overrides?: CallOverrides): Promise<string>;
 
@@ -182,17 +233,33 @@ export interface GameLogic extends BaseContract {
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
+  ship(overrides?: CallOverrides): Promise<string>;
+
   start(
     ethersPosition_: PositionStruct[],
     overrides?: Overrides & { from?: string },
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
+    PERCENT_BASE(overrides?: CallOverrides): Promise<number>;
+
+    SPECS_MULTIPLIER(overrides?: CallOverrides): Promise<number>;
 
     bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     buyBullets(amount_: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
 
     gameRegistry(overrides?: CallOverrides): Promise<string>;
 
@@ -205,13 +272,20 @@ export interface GameLogic extends BaseContract {
       overrides?: CallOverrides,
     ): Promise<void>;
 
+    ship(overrides?: CallOverrides): Promise<string>;
+
     start(ethersPosition_: PositionStruct[], overrides?: CallOverrides): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "EIP712DomainChanged()"(): EIP712DomainChangedEventFilter;
+    EIP712DomainChanged(): EIP712DomainChangedEventFilter;
+  };
 
   estimateGas: {
     PERCENT_BASE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    SPECS_MULTIPLIER(overrides?: CallOverrides): Promise<BigNumber>;
 
     bulletPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -219,6 +293,8 @@ export interface GameLogic extends BaseContract {
       amount_: BigNumberish,
       overrides?: PayableOverrides & { from?: string },
     ): Promise<BigNumber>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
 
     gameRegistry(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -231,6 +307,8 @@ export interface GameLogic extends BaseContract {
       overrides?: Overrides & { from?: string },
     ): Promise<BigNumber>;
 
+    ship(overrides?: CallOverrides): Promise<BigNumber>;
+
     start(
       ethersPosition_: PositionStruct[],
       overrides?: Overrides & { from?: string },
@@ -240,12 +318,16 @@ export interface GameLogic extends BaseContract {
   populateTransaction: {
     PERCENT_BASE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    SPECS_MULTIPLIER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     bulletPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     buyBullets(
       amount_: BigNumberish,
       overrides?: PayableOverrides & { from?: string },
     ): Promise<PopulatedTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     gameRegistry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -257,6 +339,8 @@ export interface GameLogic extends BaseContract {
       newPlayerPosition_: PositionStruct,
       overrides?: Overrides & { from?: string },
     ): Promise<PopulatedTransaction>;
+
+    ship(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     start(
       ethersPosition_: PositionStruct[],

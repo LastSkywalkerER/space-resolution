@@ -5,8 +5,8 @@ import { CameraControls, useKeyboardControls } from "@react-three/drei";
 import { FC, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { RapierRigidBody, RigidBody, quat, vec3 } from "@react-three/rapier";
-import { CustomObjectLoader } from "../customObject";
-import { shipAssets } from "./asssets";
+import { CustomFbxLoader, CustomObjectLoader } from "../customObject";
+import { shipAssets, shipAssets2 } from "./asssets";
 import { Controls } from "@/constants";
 import { Group } from "three";
 import { ShipInfo } from "./ShipInfo";
@@ -118,7 +118,8 @@ export const Ship: FC<GroupProps & ShipProps> = ({
       >
         <ShipInfo name="Ship" />
         <group ref={character}>
-          <CustomObjectLoader {...shipAssets} />
+          <CustomFbxLoader {...shipAssets2} />
+          {/* <CustomObjectLoader {...shipAssets} /> */}
         </group>
 
         <directionalLight

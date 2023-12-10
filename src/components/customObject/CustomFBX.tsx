@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { PrimitiveProps, useLoader } from '@react-three/fiber';
-import { useFBX, useTexture } from '@react-three/drei';
-import { FC, useLayoutEffect } from 'react';
-import * as THREE from 'three';
+import { PrimitiveProps, useLoader } from "@react-three/fiber";
+import { useFBX, useTexture } from "@react-three/drei";
+import { FC, useLayoutEffect } from "react";
+import * as THREE from "three";
 
 export interface CustomFbxLoaderProps {
   fbxPath: string;
@@ -12,25 +12,26 @@ export interface CustomFbxLoaderProps {
   heightPath: string;
   roughnessPath: string;
   metalnessPath: string;
+  aoPath?: string;
 }
 
-export const CustomFbxLoader: FC<
-  Omit<PrimitiveProps, 'object'> & CustomFbxLoaderProps
-> = ({
+export const CustomFbxLoader: FC<Omit<PrimitiveProps, "object"> & CustomFbxLoaderProps> = ({
   fbxPath,
   texturePath,
   normalPath,
   heightPath,
   roughnessPath,
   metalnessPath,
+  aoPath,
   ...props
 }) => {
-  const [texture, normal, height, roughness, metalness] = useTexture([
+  const [texture, normal, height, roughness, metalness, aoMap] = useTexture([
     texturePath,
     normalPath,
     heightPath,
     roughnessPath,
     metalnessPath,
+    ...(aoPath ? [aoPath] : []),
   ]);
   const fbx = useFBX(fbxPath);
 
@@ -47,18 +48,19 @@ export const CustomFbxLoader: FC<
           map: texture,
           normalMap: normal,
           // displacementMap: height,
-          displacementBias: -0.05,
-          displacementScale: 1,
+          // displacementBias: -0.05,
+          // displacementScale: 1,
           roughnessMap: roughness,
           metalnessMap: metalness,
           bumpMap: height,
+          aoMap,
         });
 
         child.material = material;
         child.geometry.computeVertexNormals();
       }
     });
-  }, [height, metalness, normal, fbxClone, roughness, texture]);
+  }, [height, metalness, normal, fbxClone, roughness, texture, aoMap]);
 
   return <primitive object={fbxClone} {...props} />;
 };

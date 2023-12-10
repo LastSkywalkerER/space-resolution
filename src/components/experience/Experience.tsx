@@ -78,6 +78,8 @@ export const Experience: FC<ExperienceProps> = ({ downgradedPerformance }) => {
       {hits.map((hit) => (
         <BulletHit key={hit.id} {...hit} onEnded={() => onHitEnded(hit.id)} />
       ))}
+      <ambientLight intensity={1} />
+      <Environment files={"./space/Space_sn_copy.hdr"} background />
       <Environment preset="sunset" />
     </>
   );

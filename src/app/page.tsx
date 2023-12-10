@@ -66,9 +66,6 @@ export default function Home() {
                 }}
               />
 
-              <ambientLight intensity={1.5} />
-              <Environment files={"./space/Space_sn_copy.hdr"} background />
-
               {isPlaying && (
                 <Suspense fallback={null}>
                   <Physics gravity={[0, 0, 0]}>
